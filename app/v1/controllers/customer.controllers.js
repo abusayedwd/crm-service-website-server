@@ -162,7 +162,7 @@ const updateCustomer = async (req, res, next) => {
 // Delete Customer Controller
 const deleteCustomer = async (req, res, next) => {
     try {
-        const { id } = req.params;
+        const { id } = req.query;
         const deletedCustomer = await Customer.findByIdAndDelete(id);
 
         if (!deletedCustomer) {
