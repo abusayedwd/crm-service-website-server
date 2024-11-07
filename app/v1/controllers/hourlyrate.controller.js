@@ -1,3 +1,4 @@
+const pagination = require('../../../helpers/pagination');
 const HourlyRate = require('../models/HourlyRate'); // Adjust path as needed
 
 // Create a new hourly rate
@@ -69,12 +70,20 @@ const getHourlyRateById = async (req, res) => {
 // Get all hourly rates
 const getAllHourlyRates = async (req, res) => {
   try {
-    const hourlyRates = await HourlyRate.find();
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+    const hourlyRatesLentgh = await HourlyRate.find().countDocuments()
+    const hourlyRates = await HourlyRate.find()
+
+    const paginationOfPost= pagination(hourlyRatesLentgh,limit,page)
+
 
     res.status(200).json({
       status: "success",
       statusCode: 200,
-      data: hourlyRates
+      data: hourlyRates,
+      pagination:paginationOfPost
     });
   } catch (error) {
     res.status(500).json({

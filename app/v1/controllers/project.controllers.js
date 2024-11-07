@@ -1,3 +1,4 @@
+const pagination = require('../../../helpers/pagination');
 const Response = require('../../../helpers/respones');
 const Project  = require('../models/Project'); // Import the Project model
 
@@ -96,12 +97,22 @@ const updateProject = async (req, res, next) => {
 // Show All Projects Controller
 const showAllProjects = async (req, res, next) => {
     try {
-        const projects = await Project.find();
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const projectsLength = await Project.find().countDocuments()
+        const projects = await Project.find()
+
+         // for the pagination 
+
+   const paginationOfPost= pagination(projectsLength,limit,page)
         res.status(200).json(Response({
             status: "success",
             statusCode: 200,
             message: "Projects retrieved successfully.",
-            data: projects
+            data: projects,
+            pagination:paginationOfPost
         }));
     } catch (error) {
         next(error);
@@ -132,6 +143,8 @@ const showProjectById = async (req, res, next) => {
         next(error);
     }
 };
+
+
 
 module.exports = {
     createProject,

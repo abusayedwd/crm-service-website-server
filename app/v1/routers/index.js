@@ -7,6 +7,7 @@ const customerRouter=require('../routers/customer.router')
 const serviceRouter=require('../routers/service.routers')
 const employeeRouter=require('../routers/employee.routers')
 const employeRateRouter=require('../routers/hourlyRate.router')
+const employeePaymentrouter=require('../routers/emplyeePayment.routers')
 
 // const locationRouter=require('../routers/location.routers');
 // const authenticateUser = require('../../middlewares/auth');
@@ -30,6 +31,8 @@ router.use('/service',serviceRouter)
 router.use('/employee-add',employeeRouter)
 
 router.use('/employee-hourlyRate',employeRateRouter)
+
+router.use('/employee-payment',employeePaymentrouter)
 
 // user location 
 
