@@ -24,6 +24,18 @@ const empolyeeschema = new mongoose.Schema({
      eightHourRate:{type:String,required:false,default:"20"},
      tenHourRate:{type:String,required:false,default:"30"},
      function:{type:String,required:false,default:"employee"},
+
+     // employee payment
+     paymentAmount:{type:String,require:false,default:"0"},
+     paymentDate:{type:String,require:false},
+     forWhatPayment:{type:String,require:false},
+     paymentAction:{type:String,require:false,enum:["paid","unpaid"],default:"unpaid"},
+
+     // employe hours per week
+     projectName:{type:String,required:false},
+     workForWeekName:{type:String,required:false},
+     workForDayName:{type:String,required:false},
+     workForHours:{type:String,required:false},
      
 
 
