@@ -1,3 +1,5 @@
+const pagination = require('../../../helpers/pagination');
+const Response = require('../../../helpers/respones');
 const Employee = require('../models/Employee'); // Adjust the path as necessary
 
 // Create Employee
@@ -61,15 +63,34 @@ const createEmployee = async (req, res, next) => {
     }
 };
 
-// Get All Employees
+// Get All Employees with optional name query
 const getAllEmployees = async (req, res, next) => {
     try {
-        const employees = await Employee.find();
-        res.status(200).json({
+
+        // for pagination 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
+        const { name } = req.query;
+
+        // Create a filter object, adding a name filter if provided
+        const filter = name ? { name: new RegExp(name, 'i') } : {};
+
+        const employeesLength= await Employee.find(filter).countDocuments()
+
+        const employees = await Employee.find(filter)
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+        const customePagination=pagination(employeesLength,limit,page)
+        
+        res.status(200).json(Response({
             status: "success",
             statusCode: 200,
-            data: employees
-        });
+            message:"show all user successfully",
+            data: employees,
+            pagination:customePagination
+        }));
     } catch (error) {
         next(error);
     }

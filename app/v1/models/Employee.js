@@ -19,6 +19,14 @@ const empolyeeschema = new mongoose.Schema({
      mobile:{type:String,required:true},
      
      ibn:{type:String,required:true},
+
+     // hourly rate portion
+     eightHourRate:{type:String,required:false,default:"20"},
+     tenHourRate:{type:String,required:false,default:"30"},
+     function:{type:String,required:false,default:"employee"},
+     
+
+
         
 }, { timestamps: true });
   
