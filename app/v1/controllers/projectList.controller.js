@@ -99,7 +99,7 @@ const deleteProject = async (req, res, next) => {
 // Get all projects
 const getAllProjects = async (req, res, next) => {
     try {
-        const projects = await ProjectList.find();
+        const projects = await ProjectList.find()
 
         res.status(200).json(Response({
             status: "success",
@@ -107,6 +107,24 @@ const getAllProjects = async (req, res, next) => {
             message:"show all project list",
             data: projects
         }));
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// Get all project names
+const getAllProjectNames = async (req, res, next) => {
+    try {
+        // Fetch only the `projectName` field for each project
+        const projects = await ProjectList.find().select('projectName');
+
+        res.status(200).json({
+            status: "success",
+            statusCode: 200,
+            message: "Showing all project names",
+            data: projects
+        });
     } catch (error) {
         next(error);
     }
@@ -142,5 +160,7 @@ module.exports = {
     updateProject,
     deleteProject,
     getAllProjects,
-    getProjectById
+    getProjectById,
+
+    getAllProjectNames
 };

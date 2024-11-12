@@ -31,11 +31,11 @@ const empolyeeschema = new mongoose.Schema({
      forWhatPayment:{type:String,require:false},
      paymentAction:{type:String,require:false,enum:["paid","unpaid"],default:"unpaid"},
 
-     // employe hours per week
-     projectName:{type:String,required:false},
-     workForWeekName:{type:String,required:false},
-     workForDayName:{type:String,required:false},
-     workForHours:{type:String,required:false},
+    //  // employe hours per week
+    //  projectName:{type:String,required:false},
+    //  workForWeekName:{type:String,required:false},
+    //  workForDayName:{type:String,required:false},
+    //  workForHours:{type:String,required:false},
      
 
 
