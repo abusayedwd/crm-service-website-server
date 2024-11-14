@@ -1,3 +1,4 @@
+const pagination = require('../../../helpers/pagination');
 const Response = require('../../../helpers/respones');
 const WorkHour = require('../models/WorkHour');
 
@@ -55,21 +56,24 @@ const createWorkHour = async (req, res, next) => {
 
 const updateWorkHour = async (req, res, next) => {
     try {
-        const { employeeId, projectId, weekName, dayName, hours } = req.body;
+        const { weekName, dayName, hours } = req.body;
+        const {id}=req.query
 
-        if (!employeeId || !projectId || !weekName || !dayName || hours === undefined) {
+        if ( !weekName || !dayName || hours === undefined) {
             return res.status(400).json({
+                statusCode:400,
                 status: "error",
                 message: "Missing required fields: employeeId, projectId, weekName, dayName, or hours"
             });
         }
 
         // Find the existing WorkHour entry for the specified employee and project
-        let workHourEntry = await WorkHour.findOne({ employeId:employeeId, projectId:projectId });
-        console.log(workHourEntry,employeeId,projectId);
+        let workHourEntry = await WorkHour.findById(id);
+        console.log(workHourEntry);
 
         if (!workHourEntry) {
             return res.status(404).json({
+                statusCode:404,
                 status: "error",
                 message: "No existing work hour entry found for the specified employee and project"
             });
@@ -113,13 +117,20 @@ const updateWorkHour = async (req, res, next) => {
 
 const showWorkHoursByProjectAndWeek = async (req, res, next) => {
     try {
+
+        
+        // for pagination 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+
         const { projectId, weekName } = req.query;
 
         if (!projectId) {
-            return res.status(400).json({
+            return res.status(400).json(Response({
                 status: "error",
+                statusCode:400,
                 message: "Missing required field: projectId"
-            });
+            }));
         }
 
         // Build query to filter by projectId and, optionally, by weekName if provided
@@ -129,20 +140,24 @@ const showWorkHoursByProjectAndWeek = async (req, res, next) => {
         }
 
         // Retrieve work hours for the specified project and week
-        const workHours = await WorkHour.find(filter).populate("employeId", "name");
+        const workHoursLength = await WorkHour.find(filter).countDocuments()
+        const workHours = await WorkHour.find(filter).populate("employeId", "name")
+        .skip((page - 1) * limit)
+        .limit(limit);
 
         if (!workHours.length) {
-            return res.status(404).json({
+            return res.status(404).json(Response({
                 status: "error",
+                statusCode:404,
                 message: "No work hour entries found for the specified project and week"
-            });
+            }));
         }
 
         // Format the response to group hours by employee and week
         const response = workHours.map(entry => {
             console.log(entry);
             const employeeInfo = {
-                // employeeId: entry.employeId,
+                _id: entry._id,
                 employeeName: entry.employeId.name,
                 projectId: entry.projectId,
                 weekData: entry.week
@@ -156,10 +171,15 @@ const showWorkHoursByProjectAndWeek = async (req, res, next) => {
             return employeeInfo;
         });
 
-        res.status(200).json({
+        const customePagination=pagination(workHoursLength,limit,page)
+
+        res.status(200).json(Response({
             status: "success",
-            data: response
-        });
+            statusCode:200,
+            data: response,
+            message:"show successfully",
+            pagination:customePagination
+        }));
     } catch (error) {
         next(error);
     }

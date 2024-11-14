@@ -8,9 +8,7 @@ const daySchema = new mongoose.Schema({
 const workHourSchema = new mongoose.Schema({
     employeId: { type: mongoose.Schema.Types.ObjectId,ref:"Employee",required:true}, 
     projectId: { type: mongoose.Schema.Types.ObjectId,ref:"ProjectList",required:true}, 
-    // weekName: { type: String, required: true }, 
-    // dayName: { type: String, required: true }, 
-    // hours: { type: String, required: true }, 
+   
 
     week:[
       {
