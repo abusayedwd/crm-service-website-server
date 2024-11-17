@@ -183,10 +183,29 @@ const deleteCustomer = async (req, res, next) => {
     }
 };
 
+// Get all project names
+const getAllCustomerNames = async (req, res, next) => {
+    try {
+        // Fetch only the `projectName` field for each project
+        const projects = await Customer.find().select('name');
+
+        res.status(200).json({
+            status: "success",
+            statusCode: 200,
+            message: "Showing all Customer names",
+            data: projects
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
 module.exports = {
     createCustomer,
     showAllCustomers,
     showCustomerById,
     updateCustomer,
-    deleteCustomer
+    deleteCustomer,
+    getAllCustomerNames
 };

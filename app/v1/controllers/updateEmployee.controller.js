@@ -71,4 +71,66 @@ const updateEmployeePayment = async (req, res, next) => {
     }
 };
 
-module.exports = { updateEmployeeHourlyRate,updateEmployeePayment };
+// Update Employee Payment Controller
+// const updateEmployeePayment = async (req, res, next) => {
+//     try {
+//         const { id } = req.query; // Get the employee ID from query parameters
+//         const { paymentAmount, paymentDate, forWhatPayment, paymentAction } = req.body; // Get payment values from request body
+
+//         // Create a new payment record
+//         const newPayment = {
+//             paymentAmount: paymentAmount || "0", // Set default if not provided
+//             paymentDate: paymentDate || new Date(), // Set default to current date if not provided
+//             forWhatPayment: forWhatPayment || "", // Set default if not provided
+//             paymentAction: paymentAction || "" // Set default if not provided
+//         };
+
+//         // Find the employee by ID and update by pushing the new payment record to the paymentHistory array
+//         const updatedEmployee = await Employee.findByIdAndUpdate(
+//             id,
+//             { $push: { paymentHistory: newPayment } }, // Push new payment to paymentHistory array
+//             { new: true } // Return the updated document
+//         );
+//         console.log(updatedEmployee,newPayment);
+
+//         // If no employee found, return an error
+//         if (!updatedEmployee) {
+//             return res.status(404).json({ status: "error", statusCode: 404, message: "Employee not found" });
+//         }
+
+//         // Return the updated employee payment data
+//         res.status(200).json({
+//             status: "success",
+//             statusCode: 200,
+//             message: "Employee payment information updated successfully",
+//             data: updatedEmployee
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+const employeeTotalPayment = async (req, res, next) => {
+    try {
+        // Fetch all employees
+        const employees = await Employee.find();
+
+        // Calculate the total payment amount
+        const totalPaymentAmount = employees.reduce((total, employee) => {
+            return total + parseFloat(employee.paymentAmount || "0");
+        }, 0);
+
+        // Respond with the total payment amount
+        res.status(200).json({
+            status: "success",
+            statusCode: 200,
+            message: "Total payment amount calculated successfully",
+            data: {
+                totalPaymentAmount: totalPaymentAmount.toFixed(2) // Ensure it's a formatted number
+            }
+        });
+    } catch (error) {
+        next(error); // Pass errors to the error handler
+    }
+};
+module.exports = { updateEmployeeHourlyRate,updateEmployeePayment,employeeTotalPayment };

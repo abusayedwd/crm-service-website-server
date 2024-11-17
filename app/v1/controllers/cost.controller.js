@@ -119,10 +119,30 @@ const getCostById = async (req, res, next) => {
     }
 };
 
+const totalCost = async (req, res, next) => {
+    try {
+      // Retrieve all Cost documents
+      const costs = await Cost.find();
+  
+      // Calculate the total amount
+      const totalAmount = costs.reduce((total, cost) => {
+        // Sum up amounts in the week array for each document
+        const weekTotal = cost.week.reduce((sum, week) => sum + parseFloat(week.amount || 0), 0);
+        return total + weekTotal;
+      }, 0);
+  
+      // Respond with the total amount
+      res.status(200).json({ status:"success",message:"show successfully",statusCode:200,data:{totalAmount} });
+    } catch (error) {
+      next(error);
+    }
+  };
+  
 
 module.exports={
 
     createCost,
     getAllCosts,
-    getCostById
+    getCostById,
+    totalCost
 }

@@ -11,6 +11,7 @@ const projectlistRouter=require('../routers/projectList.router')
 
 const workHourRouters=require('../routers/workHour.routers');
 const costRouters=require('../routers/cost.router');
+const invoiceRouters=require('../routers/invoiceProject.routers');
 // const authenticateUser = require('../../middlewares/auth');
 
 const router = express.Router();
@@ -37,6 +38,7 @@ router.use('/project-list',projectlistRouter)
 
 router.use('/work-hours',workHourRouters)
 router.use('/cost-in',costRouters)
+router.use('/invoice-project',invoiceRouters)
 
 // user location 
 

@@ -12,7 +12,7 @@ const { forgotPasswordService, changePasswordService, userLogin } = require("../
 
 const signUp = async (req, res, next) => {
     try {
-        const { name, email, password, phone,role } = req.body;
+        const { name, email, password, phone,role,agencyId } = req.body;
         console.log(password)
 
         // Check if the user already exists
@@ -33,7 +33,7 @@ const signUp = async (req, res, next) => {
         const oneTimeCode = emailResult.oneTimeCode;
 
         // Create a new user instance and save it to the database
-        const newUser = new User({ name, email, password, phone, oneTimeCode,role });
+        const newUser = new User({ name, email, password, phone, oneTimeCode,role,agencyId });
         const savedUser = await newUser.save();
 
         if (!emailResult.success) {

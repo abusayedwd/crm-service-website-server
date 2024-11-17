@@ -2,7 +2,7 @@
 const express = require('express');
 
 
-const { createCustomer, updateCustomer, showAllCustomers, showCustomerById, deleteCustomer } = require('../controllers/customer.controllers');
+const { createCustomer, updateCustomer, showAllCustomers, showCustomerById, deleteCustomer, getAllCustomerNames } = require('../controllers/customer.controllers');
 const authenticateUser = require('../../../middlewares/auth');
 const upload = require('../../../middlewares/fileupload');
 
@@ -14,5 +14,6 @@ router.get('/showAllCustomers',showAllCustomers)
 router.get('/showCustomerById',showCustomerById)
 router.delete('/deleteCustomer',deleteCustomer)
 
+router.get('/getAllCustomerNames',getAllCustomerNames)
 
 module.exports=router
