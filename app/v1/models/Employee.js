@@ -21,8 +21,8 @@ const empolyeeschema = new mongoose.Schema({
      ibn:{type:String,required:true},
 
      // hourly rate portion
-     eightHourRate:{type:String,required:false,default:"20"},
-     tenHourRate:{type:String,required:false,default:"30"},
+     eightHourRate:{type:String,required:false,default:"00"},
+     tenHourRate:{type:String,required:false,default:"00"},
      function:{type:String,required:false,default:"employee"},
 
     //  // employee payment

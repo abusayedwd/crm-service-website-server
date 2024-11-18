@@ -49,7 +49,7 @@ const updateEmployeePayment = async (req, res, next) => {
                 paymentAmount: paymentAmount || "0", // Update or keep default
                 paymentDate: paymentDate || null, // Update or keep null if not provided
                 forWhatPayment: forWhatPayment || "", // Update or keep empty if not provided
-                paymentAction: paymentAction || "" // Update or keep empty if not provided
+                paymentAction: paymentAction || "paid" // Update or keep empty if not provided
             },
             { new: true } // Return the updated document
         );
