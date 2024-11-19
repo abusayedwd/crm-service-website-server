@@ -165,7 +165,8 @@ const showWorkHoursByProjectAndWeek = async (req, res, next) => {
                     .map(week => ({
                         weekName: week.weekName,
                         totalHours: week.dayName.reduce((sum, day) => sum + parseFloat(day.hours), 0),
-                        days: week.dayName
+                        days: week.dayName,
+                        
                     }))
             };
             return employeeInfo;
@@ -186,10 +187,167 @@ const showWorkHoursByProjectAndWeek = async (req, res, next) => {
 };
 
 
+const showWorkHoursByProjecWeek = async (req, res, next) => {
+    try {
+        // Pagination
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
+        const { projectId } = req.query;
+
+        if (!projectId) {
+            return res.status(400).json(Response({
+                status: "error",
+                statusCode: 400,
+                message: "Missing required field: projectId"
+            }));
+        }
+
+        // Build query to filter by projectId
+        const filter = { projectId };
+
+        // Retrieve total count and paginated work hours
+        const workHoursLength = await WorkHour.find(filter).countDocuments();
+        const workHours = await WorkHour.find(filter)
+            .populate("employeId", "name")
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        if (!workHours.length) {
+            return res.status(404).json(Response({
+                status: "error",
+                statusCode: 404,
+                message: "No work hour entries found for the specified project"
+            }));
+        }
+
+        // Format the response to group hours by employee and calculate total week hours
+        const response = workHours.map(entry => {
+            const weekData = entry.week.map(week => ({
+                weekName: week.weekName,
+                totalHours: week.dayName.reduce((sum, day) => sum + parseFloat(day.hours), 0),
+            }));
+
+            const totalWeekHours = weekData.reduce((sum, week) => sum + week.totalHours, 0);
+
+            return {
+                _id: entry._id,
+                employeeName: entry.employeId.name,
+                projectId: entry.projectId,
+                weekData,
+                totalWeekHours, // Total hours for all weeks for this user
+            };
+        });
+
+        const customePagination = pagination(workHoursLength, limit, page);
+
+        res.status(200).json(Response({
+            status: "success",
+            statusCode: 200,
+            data: response,
+            message: "Work hours retrieved successfully",
+            pagination: customePagination,
+        }));
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+
 
 
 
 // Controller to show work hours by week
+
+// const showWorkHoursByProjecWeek = async (req, res, next) => {
+//     try {
+//         // Pagination
+//         const page = parseInt(req.query.page) || 1;
+//         const limit = parseInt(req.query.limit) || 10;
+
+//         const { projectId } = req.query;
+
+//         if (!projectId) {
+//             return res.status(400).json(Response({
+//                 status: "error",
+//                 statusCode: 400,
+//                 message: "Missing required field: projectId"
+//             }));
+//         }
+
+//         // Build query to filter by projectId
+//         const filter = { projectId };
+
+//         // Retrieve total count and paginated work hours
+//         const workHoursLength = await WorkHour.find(filter).countDocuments();
+//         const workHours = await WorkHour.find(filter)
+//             .populate("employeId", "name")
+//             .skip((page - 1) * limit)
+//             .limit(limit);
+
+//         if (!workHours.length) {
+//             return res.status(404).json(Response({
+//                 status: "error",
+//                 statusCode: 404,
+//                 message: "No work hour entries found for the specified project"
+//             }));
+//         }
+
+//         // Calculate user-specific and combined week totals
+//         let weekTotals = {};
+
+//         const response = workHours.map(entry => {
+//             const weekData = entry.week.map(week => {
+//                 const totalHours = week.dayName.reduce((sum, day) => sum + parseFloat(day.hours), 0);
+
+//                 // Update combined week totals for all users
+//                 if (!weekTotals[week.weekName]) {
+//                     weekTotals[week.weekName] = 0;
+//                 }
+//                 weekTotals[week.weekName] += totalHours;
+
+//                 return {
+//                     weekName: week.weekName,
+//                     totalHours,
+//                 };
+//             });
+
+//             const totalWeekHours = weekData.reduce((sum, week) => sum + week.totalHours, 0);
+
+//             return {
+//                 _id: entry._id,
+//                 employeeName: entry.employeId.name,
+//                 projectId: entry.projectId,
+//                 weekData,
+//                 totalWeekHours, // Total hours for all weeks for this user
+//             };
+//         });
+
+//         // Convert weekTotals object into an array for easier consumption
+//         const combinedWeekTotals = Object.entries(weekTotals).map(([weekName, totalHours]) => ({
+//             weekName,
+//             totalHours,
+//         }));
+
+//         const customePagination = pagination(workHoursLength, limit, page);
+
+//         res.status(200).json(Response({
+//             status: "success",
+//             statusCode: 200,
+//             data: {
+//                 userWorkHours: response,
+//                 combinedWeekTotals, // Total hours for all users per week
+//             },
+//             message: "Work hours retrieved successfully",
+//             pagination: customePagination,
+//         }));
+//     } catch (error) {
+//         next(error);
+//     }
+// };
+
+
 const showWorkHours = async (req, res, next) => {
     try {
         const { projectId, weekName } = req.query;
@@ -292,5 +450,6 @@ module.exports = {
     getAllWorkHours,
     updateWorkHour,
     
-    showWorkHoursByProjectAndWeek
+    showWorkHoursByProjectAndWeek,
+    showWorkHoursByProjecWeek
 };

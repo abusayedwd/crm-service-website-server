@@ -208,10 +208,28 @@ const deleteEmployee = async (req, res, next) => {
     }
 };
 
+// Get all project names
+const getAllEmployeeNames = async (req, res, next) => {
+    try {
+        // Fetch only the `projectName` field for each project
+        const projects = await Employee.find().select('name');
+
+        res.status(200).json({
+            status: "success",
+            statusCode: 200,
+            message: "Showing all Customer names",
+            data: projects
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     createEmployee,
     getAllEmployees,
     getEmployeeById,
     updateEmployee,
     deleteEmployee,
+    getAllEmployeeNames
 };
