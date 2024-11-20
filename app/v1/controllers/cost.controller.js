@@ -1,5 +1,7 @@
 const Response = require('../../../helpers/respones');
 const Cost = require('../models/Cost');
+const Employee = require('../models/Employee');
+const InvoiceProject = require('../models/InvoiceProject');
 
 
 // Create a new cost entry
@@ -83,6 +85,7 @@ const getAllCosts = async (req, res, next) => {
         }
 
         const costs = await Cost.find(filter);
+        console.log(filter,costs);
         res.status(200).json(Response({
             status: "success",
             statusCode: 200,
@@ -137,6 +140,85 @@ const totalCost = async (req, res, next) => {
       next(error);
     }
   };
+
+  const totalRevinew = async (req, res, next) => {
+    try {
+        // Calculate total cost from the `Cost` model
+        const costs = await Cost.find();
+        const totalAmountCost = costs.reduce((total, cost) => {
+            const weekTotal = cost.week.reduce((sum, week) => sum + parseFloat(week.amount || 0), 0);
+            return total + weekTotal;
+        }, 0);
+
+        // Calculate total payments from the `Employee` model
+        const employees = await Employee.find();
+        const totalPaymentAmount = employees.reduce((total, employee) => {
+            return total + parseFloat(employee.paymentAmount || 0);
+        }, 0);
+
+        // Calculate total invoice amount
+        const invoices = await InvoiceProject.find({}, "amount");
+        const totalAmount = invoices.reduce((total, invoice) => {
+            return total + parseFloat(invoice.amount || 0);
+        }, 0);
+
+        // Calculate total revenue
+        const totlaCost = totalPaymentAmount + totalAmountCost;
+        const totalRevinew = totalAmount - totlaCost;
+
+        // Respond with the total revenue
+        res.status(200).json({
+            status: "success",
+            statusCode: 200,
+            message: "Total revenue calculated successfully",
+            data: { totalRevinew:totalRevinew,totlaCost:totalAmountCost,employeeCost:totalPaymentAmount ,totalEarn:totalAmount},
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+//   const totalRevenue = async (req, res, next) => {
+//     try {
+//         // Fetch all data concurrently
+//         const [costs, employees, invoices] = await Promise.all([
+//             Cost.find({}, "week"), // Only fetch the `week` field
+//             Employee.find({}, "paymentAmount"), // Only fetch the `paymentAmount` field
+//             InvoiceProject.find({}, "amount"), // Only fetch the `amount` field
+//         ]);
+
+//         // Calculate the total cost amount from the `week` arrays
+//         const totalAmountCost = costs.reduce((total, cost) => {
+//             const weekTotal = cost.week.reduce((sum, week) => sum + parseFloat(week.amount || 0), 0);
+//             return total + weekTotal;
+//         }, 0);
+
+//         // Calculate the total payment amount from employees
+//         const totalPaymentAmount = employees.reduce((total, employee) => {
+//             return total + parseFloat(employee.paymentAmount || 0);
+//         }, 0);
+
+//         // Calculate the total invoice amount
+//         const totalInvoiceAmount = invoices.reduce((total, invoice) => {
+//             return total + parseFloat(invoice.amount || 0);
+//         }, 0);
+
+//         // Calculate total revenue
+//         const totalRevenue = totalInvoiceAmount - (totalAmountCost + totalPaymentAmount);
+
+//         // Respond with the total revenue
+//         res.status(200).json({
+//             status: "success",
+//             statusCode: 200,
+//             message: "Total revenue calculated successfully",
+//             data: totalRevenue,
+//         });
+//     } catch (error) {
+//         next(error); // Pass error to the global error handler
+//     }
+// };
+
   
 
 module.exports={
@@ -144,5 +226,6 @@ module.exports={
     createCost,
     getAllCosts,
     getCostById,
-    totalCost
+    totalCost,
+    totalRevinew
 }

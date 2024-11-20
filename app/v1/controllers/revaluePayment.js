@@ -2,22 +2,22 @@ const RevaluePayment = require('../models/RevaluePayment');
 
 // Create a new payment revalue record
 const createRevaluePayment = async (req, res,next) => {
-  try {
-    const { startDate, completedData, type, referance, orignalAmount } = req.body;
-
-    const newRevaluePayment = new RevaluePayment({
-      startDate,
-      completedData,
-      type,
-      referance,
-      orignalAmount,
-    });
-
-    const savedRevaluePayment = await newRevaluePayment.save();
-    res.status(201).json({ message: 'Revalue Payment created successfully', data: savedRevaluePayment });
-  } catch (error) {
-next(error)  }
-};
+    try {
+      const { startDate, completedData, type, referance, orignalAmount } = req.body;
+  
+      const newRevaluePayment = new RevaluePayment({
+        startDate,
+        completedData,
+        type,
+        referance,
+        orignalAmount,
+      });
+  
+      const savedRevaluePayment = await newRevaluePayment.save();
+      res.status(201).json({ message: 'Revalue Payment created successfully', data: savedRevaluePayment });
+    } catch (error) {
+  next(error)  }
+  };
 
 // Get all payment revalue records
 const getAllRevaluePayments = async (req, res,next) => {
