@@ -13,8 +13,8 @@ require('dotenv').config();
 // Sample user data
 const usersData = [
   {
-    name: "elisa",
-    email: "elisa@gmail.com",
+    name: "damir",
+    email: "info@lenbec.com ",
     phoneNumber: "01735566789",
     password: "$2a$10$dgwflQ4jc/aUtXeKBzMuxewCVGJnHWPWE0PxEyGAj1AKoIIo3BWyy",
     role: "admin",

@@ -1,7 +1,9 @@
 const Response = require('../../../helpers/respones');
 const Cost = require('../models/Cost');
+const Customer = require('../models/Customer');
 const Employee = require('../models/Employee');
 const InvoiceProject = require('../models/InvoiceProject');
+const ProjectList = require('../models/ProjectList');
 
 
 // Create a new cost entry
@@ -162,6 +164,12 @@ const totalCost = async (req, res, next) => {
             return total + parseFloat(invoice.amount || 0);
         }, 0);
 
+        // total employe
+        const employeesLength=await Employee.find().countDocuments()
+        const customerLength=await Customer.find().countDocuments()
+        const projectListLength=await ProjectList.find().countDocuments()
+        
+
         // Calculate total revenue
         const totlaCost = totalPaymentAmount + totalAmountCost;
         const totalRevinew = totalAmount - totlaCost;
@@ -171,7 +179,7 @@ const totalCost = async (req, res, next) => {
             status: "success",
             statusCode: 200,
             message: "Total revenue calculated successfully",
-            data: { totalRevinew:totalRevinew,totlaCost:totalAmountCost,employeeCost:totalPaymentAmount ,totalEarn:totalAmount},
+            data: { totalRevinew:totalRevinew,totlaCost:totalAmountCost,employeeCost:totalPaymentAmount ,totalEarn:totalAmount,employeesLength,customerLength,projectListLength},
         });
     } catch (error) {
         next(error);
