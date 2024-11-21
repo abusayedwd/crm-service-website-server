@@ -12,6 +12,8 @@ const projectlistRouter=require('../routers/projectList.router')
 const workHourRouters=require('../routers/workHour.routers');
 const costRouters=require('../routers/cost.router');
 const invoiceRouters=require('../routers/invoiceProject.routers');
+const payemntInvoicceRouter=require('../routers/paymentRevaluate.router');
+const quoterRouter=require('../routers/quote.router');
 // const authenticateUser = require('../../middlewares/auth');
 
 const router = express.Router();
@@ -39,6 +41,8 @@ router.use('/project-list',projectlistRouter)
 router.use('/work-hours',workHourRouters)
 router.use('/cost-in',costRouters)
 router.use('/invoice-project',invoiceRouters)
+router.use('/payment-invoice',payemntInvoicceRouter)
+router.use('/qoute',quoterRouter)
 
 // user location 
 

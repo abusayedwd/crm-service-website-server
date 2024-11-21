@@ -1,4 +1,5 @@
-const RevaluePayment = require('../models/RevaluePayment');
+const RevaluePayment = require("../models/RevaluePayemnt");
+
 
 // Create a new payment revalue record
 const createRevaluePayment = async (req, res,next) => {
@@ -31,7 +32,7 @@ next(error)  }
 // Get a payment revalue record by ID
 const getRevaluePaymentById = async (req, res,next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     const revaluePayment = await RevaluePayment.findById(id);
 
     if (!revaluePayment) {
@@ -46,7 +47,7 @@ next(error)  }
 // Update a payment revalue record by ID
 const updateRevaluePayment = async (req, res,next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
     const updates = req.body;
 
     const updatedRevaluePayment = await RevaluePayment.findByIdAndUpdate(id, updates, { new: true });
@@ -63,7 +64,7 @@ next(error)  }
 // Delete a payment revalue record by ID
 const deleteRevaluePayment = async (req, res,next) => {
   try {
-    const { id } = req.params;
+    const { id } = req.query;
 
     const deletedRevaluePayment = await RevaluePayment.findByIdAndDelete(id);
 
