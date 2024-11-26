@@ -29,6 +29,6 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: MAX_FILE_SIZE }, // Set max file size limit
     fileFilter: fileFilter,
-}).fields([{name:"image",maxCount:1},{name:"project",maxCount:1},{name:"customerImage",maxCount:1},{name:"serviceImage",maxCount:1},{name:"employeeImage",maxCount:1}])
+}).fields([{name:"image",maxCount:1},{name:"project",maxCount:1},{name:"customerImage",maxCount:1},{name:"serviceImage",maxCount:1},{name:"employeeImage",maxCount:1},{name:"bankrefPicture",maxCount:1}])
 
 module.exports = upload;

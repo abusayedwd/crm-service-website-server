@@ -9,8 +9,8 @@ const { createRevaluePayment, getAllRevaluePayments, getRevaluePaymentById, upda
 
 const router = express.Router()
 
-router.post('/createRevaluePayment',authenticateUser,createRevaluePayment)
-router.patch('/updateRevaluePayment',authenticateUser,updateRevaluePayment)
+router.post('/createRevaluePayment',authenticateUser,upload,createRevaluePayment)
+router.patch('/updateRevaluePayment',authenticateUser,upload,updateRevaluePayment)
 router.get('/getRevaluePaymentById',getRevaluePaymentById)
 router.get('/getAllRevaluePayments',getAllRevaluePayments)
 router.delete('/deleteRevaluePayment',deleteRevaluePayment)

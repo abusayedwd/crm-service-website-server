@@ -6,6 +6,7 @@ const paymentRevalueSchema = new mongoose.Schema({
     startDate: { type: String, required: true }, // Fixing the field name to "termsText"
     completedData: { type: String, required: true }, // Fixing the field name to "termsText"
     type: { type: String, required: true }, // Fixing the field name to "termsText"
+    bankrefPicture:{type:Object,required:true},
     referance: { type: String, required: true }, // Fixing the field name to "termsText"
     orignalAmount: { type: String, required: true }, // Fixing the field name to "termsText"
   }, { timestamps: true });
