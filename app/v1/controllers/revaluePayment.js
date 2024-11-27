@@ -1,3 +1,4 @@
+const Response = require("../../../helpers/respones");
 const RevaluePayment = require("../models/RevaluePayemnt");
 
 
@@ -59,77 +60,109 @@ next(error)  }
 };
 
 // Update a payment revalue record by ID
-// const updateRevaluePayment = async (req, res,next) => {
-//   try {
-//     const { id } = req.query;
-//     const updates = req.body;
 
-//     const { bankrefPicture } = req.files || {};
-//     const files = [];
-
-//     // Check if there are uploaded files
-//     if (bankrefPicture && Array.isArray(bankrefPicture)) {
-//       bankrefPicture.forEach((img) => {
-//             const publicFileUrl = `/images/users/${img.filename}`;
-//             files.push({
-//                 publicFileUrl,
-//                 path: img.filename,
-//             });
-//         });
-//     }
-
-//     const updatedRevaluePayment = await RevaluePayment.findByIdAndUpdate(id, updates, { new: true });
-
-//     if (!updatedRevaluePayment) {
-//       return res.status(404).json({ error: 'Revalue Payment not found' });
-//     }
-
-//     res.status(200).json({ message: 'Revalue Payment updated successfully', data: updatedRevaluePayment });
-//   } catch (error) {
-// next(error)  }
-// };
-// Update a payment revalue record by ID
 const updateRevaluePayment = async (req, res, next) => {
   try {
-      const { id } = req.query;
-      const updates = req.body;
+    const { id } = req.query;
+    const { startDate, completedData, type, referance, orignalAmount } = req.body;
+    const { bankrefPicture } = req.files || {};
 
-      const { bankrefPicture } = req.files || {};
-      const files = [];
+    // Validate ID
+    if (!id) {
+      return res
+        .status(400)
+        .json(Response({ statusCode: 400, message: 'ID is required in the query.', status: 'failed' }));
+    }
 
-      // Check if there are uploaded files
-      if (bankrefPicture && Array.isArray(bankrefPicture)) {
-          bankrefPicture.forEach((img) => {
-              const publicFileUrl = `/images/users/${img.filename}`;
-              files.push({
-                  publicFileUrl,
-                  path: img.filename,
-              });
-          });
-
-          // Add the first file to updates if there are uploaded files
-          if (files.length > 0) {
-              updates.bankrefPicture = files[0];
-          }
-      }
-
-      // Find and update the revalue payment record
-      const updatedRevaluePayment = await RevaluePayment.findByIdAndUpdate(id, updates, { new: true });
-
-      // Check if the record was found
-      if (!updatedRevaluePayment) {
-          return res.status(404).json({ error: 'Revalue Payment not found' });
-      }
-
-      // Respond with success
-      res.status(200).json({
-          message: 'Revalue Payment updated successfully',
-          data: updatedRevaluePayment,
+    // Handle uploaded files
+    const files = [];
+    if (bankrefPicture && Array.isArray(bankrefPicture)) {
+      bankrefPicture.forEach((img) => {
+        const publicFileUrl = `/images/revalue/${img.filename}`;
+        files.push({
+          publicFileUrl,
+          path: img.filename,
+        });
       });
+    }
+
+    // Find the record by ID
+    const revaluePayment = await RevaluePayment.findById(id);
+    if (!revaluePayment) {
+      return res
+        .status(404)
+        .json(Response({ statusCode: 404, message: 'Revalue Payment not found.', status: 'failed' }));
+    }
+
+    // Update fields if provided
+    revaluePayment.startDate = startDate || revaluePayment.startDate;
+    revaluePayment.completedData = completedData || revaluePayment.completedData;
+    revaluePayment.type = type || revaluePayment.type;
+    revaluePayment.referance = referance || revaluePayment.referance;
+    revaluePayment.orignalAmount = orignalAmount || revaluePayment.orignalAmount;
+    revaluePayment.bankrefPicture = files.length > 0 ? files[0] : revaluePayment.bankrefPicture;
+
+    // Save the updated record
+    const updatedRevaluePayment = await revaluePayment.save();
+
+    // Respond with success
+    res.status(200).json(
+      Response({
+        statusCode: 200,
+        message: 'Revalue Payment updated successfully.',
+        status: 'success',
+        data: updatedRevaluePayment,
+      })
+    );
   } catch (error) {
-      next(error); // Pass error to the global error handler
+    console.error('Error updating Revalue Payment:', error); // Log the error for debugging
+    next(error); // Pass to the error handler middleware
   }
 };
+
+
+// Update a payment revalue record by ID
+// const updateRevaluePayment = async (req, res, next) => {
+//   try {
+//       const { id } = req.query;
+//       const { startDate, completedData, type, referance, orignalAmount } = req.body;
+
+//       const { bankrefPicture } = req.files || {};
+//       const files = [];
+
+//       // Check if there are uploaded files
+//       if (bankrefPicture && Array.isArray(bankrefPicture)) {
+//           bankrefPicture.forEach((img) => {
+//               const publicFileUrl = `/images/users/${img.filename}`;
+//               files.push({
+//                   publicFileUrl,
+//                   path: img.filename,
+//               });
+//           });
+
+//           // Add the first file to updates if there are uploaded files
+//           if (files.length > 0) {
+//               updates.bankrefPicture = files[0];
+//           }
+//       }
+
+//       // Find and update the revalue payment record
+//       const updatedRevaluePayment = await RevaluePayment.findByIdAndUpdate(id, updates, { new: true });
+
+//       // Check if the record was found
+//       if (!updatedRevaluePayment) {
+//           return res.status(404).json({ error: 'Revalue Payment not found' });
+//       }
+
+//       // Respond with success
+//       res.status(200).json({
+//           message: 'Revalue Payment updated successfully',
+//           data: updatedRevaluePayment,
+//       });
+//   } catch (error) {
+//       next(error); // Pass error to the global error handler
+//   }
+// };
 
 
 // Delete a payment revalue record by ID

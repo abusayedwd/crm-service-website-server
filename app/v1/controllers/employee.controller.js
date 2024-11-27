@@ -1,6 +1,8 @@
 const pagination = require('../../../helpers/pagination');
 const Response = require('../../../helpers/respones');
 const Employee = require('../models/Employee'); // Adjust the path as necessary
+const EmployeeHoureRate = require('../models/EmployeHoureRate');
+const WorkHour = require('../models/WorkHour');
 
 // Create Employee
 const createEmployee = async (req, res, next) => {
@@ -225,11 +227,89 @@ const getAllEmployeeNames = async (req, res, next) => {
     }
 };
 
+
+
+const calculateEmployeeEarnings = async (req, res, next) => {
+  try {
+    const { employeId } = req.query;
+
+    // Fetch employee data
+    const employee = await Employee.findById(employeId);
+    if (!employee) {
+      return res.status(404).json({
+        status: "fail",
+        statusCode: 404,
+        message: "Employee not found.",
+      });
+    }
+
+    // Fetch work hours for the employee
+    const workHours = await WorkHour.findOne({ employeId });
+    if (!workHours) {
+      return res.status(404).json({
+        status: "fail",
+        statusCode: 404,
+        message: "No work hour data found for the employee.",
+      });
+    }
+
+    // Fetch hourly rates for the employee
+    const hourRate = await EmployeeHoureRate.findOne({ employeId });
+    if (!hourRate) {
+      return res.status(404).json({
+        status: "fail",
+        statusCode: 404,
+        message: "No hourly rate data found for the employee.",
+      });
+    }
+
+    let totalEarnings = 0;
+
+    // Iterate through weeks and calculate total hours
+    for (const week of workHours.week) {
+      for (const day of week.dayName) {
+        const hoursWorked = parseFloat(day.hours);
+        console.log(hoursWorked);
+
+        if (hoursWorked <= 8) {
+          totalEarnings += hoursWorked * parseFloat(hourRate.eightHourRate);
+        } else if (hoursWorked > 8 && hoursWorked <= 10) {
+          totalEarnings += hoursWorked * parseFloat(hourRate.tenhours);
+          console.log(hourRate);
+        } else {
+          totalEarnings += 8 * parseFloat(hourRate.eightHourRate) + 
+                           (hoursWorked - 8) * parseFloat(hourRate.tenHourRate);
+        }
+      }
+    }
+
+    // Save the total earnings to the employee model
+    employee.earnTotal = totalEarnings.toFixed(2);
+    await employee.save();
+console.log(totalEarnings);
+    res.status(200).json({
+      status: "success",
+      statusCode: 200,
+      message: "Total earnings calculated successfully.",
+      data: {
+        employeeId: employee._id,
+        totalEarnings: employee.earnTotal,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+
+
 module.exports = {
     createEmployee,
     getAllEmployees,
     getEmployeeById,
     updateEmployee,
     deleteEmployee,
-    getAllEmployeeNames
+    getAllEmployeeNames,
+    calculateEmployeeEarnings
 };
