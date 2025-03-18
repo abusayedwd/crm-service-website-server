@@ -4,6 +4,7 @@ const Customer = require('../models/Customer');
 const Employee = require('../models/Employee');
 const InvoiceProject = require('../models/InvoiceProject');
 const ProjectList = require('../models/ProjectList');
+const RevaluePayment = require('../models/RevaluePayemnt');
 
 
 // Create a new cost entry
@@ -159,12 +160,18 @@ const totalCost = async (req, res, next) => {
             return total + parseFloat(employee.paymentAmount || 0);
         }, 0);
 
-        // Calculate total invoice amount
-        const invoices = await InvoiceProject.find({}, "amount");
+        // // Calculate total invoice amount
+        // const invoices = await InvoiceProject.find({}, "amount");
+        // const totalAmount = invoices.reduce((total, invoice) => {
+        //     return total + parseFloat(invoice.amount || 0);
+        // }, 0);
+
+        const invoices = await RevaluePayment.find({}, "orignalAmount");
         const totalAmount = invoices.reduce((total, invoice) => {
-            return total + parseFloat(invoice.amount || 0);
+            return total + parseFloat(invoice.orignalAmount || 0);
         }, 0);
 
+        console.log(invoices,totalAmount,"sdlfjsdflkjfs");
         // total employe
         const employeesLength=await Employee.find().countDocuments()
         const customerLength=await Customer.find().countDocuments()
