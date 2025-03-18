@@ -129,6 +129,7 @@ const totalCost = async (req, res, next) => {
       // Retrieve all Cost documents
       const costs = await Cost.find();
   
+      console.log(costs,"sdkfjklskdjfklsdj");
       // Calculate the total amount
       const totalAmount = costs.reduce((total, cost) => {
         // Sum up amounts in the week array for each document
@@ -173,6 +174,8 @@ const totalCost = async (req, res, next) => {
         // Calculate total revenue
         const totlaCost = totalPaymentAmount + totalAmountCost;
         const totalRevinew = totalAmount - totlaCost;
+
+        console.log(totalAmount,totalRevinew,"revinew");
 
         // Respond with the total revenue
         res.status(200).json({

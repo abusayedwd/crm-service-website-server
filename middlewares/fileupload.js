@@ -3,8 +3,8 @@ const path = require('path');
 const createError = require('http-errors');
 
 const UPLOAD_DIR = process.env.UPLOAD_FOLDER || "public/images/users";
-const MAX_FILE_SIZE = Number(process.env.MAX_FILE_SIZE) || 5242880; // 5 MB
-const ALLOWED_FILE_TYPES = process.env.ALLOWED_FILE_TYPES || ["jpg", "jpeg", "png"];
+const MAX_FILE_SIZE = Number(process.env.MAX_FILE_SIZE) || 20971520; // 20 MB
+const ALLOWED_FILE_TYPES = process.env.ALLOWED_FILE_TYPES || ["jpg", "jpeg", "png","csv"];
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -29,6 +29,6 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: MAX_FILE_SIZE }, // Set max file size limit
     fileFilter: fileFilter,
-}).fields([{name:"image",maxCount:1},{name:"project",maxCount:1},{name:"customerImage",maxCount:1},{name:"serviceImage",maxCount:1},{name:"employeeImage",maxCount:1},{name:"bankrefPicture",maxCount:1}])
+}).fields([{name:"image",maxCount:1},{name:"project",maxCount:1},{name:"customerImage",maxCount:1},{name:"serviceImage",maxCount:1},{name:"employeeImage",maxCount:1},{name:"bankrefPicture",maxCount:1},{name:"csvFile",maxCount:1},{name:"bankrefPicture",maxCount:1}])
 
 module.exports = upload;
