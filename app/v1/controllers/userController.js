@@ -12,7 +12,7 @@ const { forgotPasswordService, changePasswordService, userLogin } = require("../
 
 const signUp = async (req, res, next) => {
     try {
-        const { name, email, password, phone,role,agencyId } = req.body;
+        const { name, email, password, phone,role } = req.body;
         console.log(password)
 
         // Check if the user already exists
@@ -33,7 +33,7 @@ const signUp = async (req, res, next) => {
         const oneTimeCode = emailResult.oneTimeCode;
 
         // Create a new user instance and save it to the database
-        const newUser = new User({ name, email, password, phone, oneTimeCode,role,agencyId });
+        const newUser = new User({ name, email, password, phone, oneTimeCode,role, });
         const savedUser = await newUser.save();
 
         if (!emailResult.success) {
@@ -458,7 +458,27 @@ if (profile && Array.isArray(profile)) {
         
     }
 }
+
+ const getAllUsers = async (req, res) => {
+    try {
+      const users = await User.find({ isDeleted: false }).select('-password');
+      res.status(200).json({
+        success: true,
+        count: users.length,
+        data: users
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Error fetching users',
+        error: error.message
+      });
+    }
+  };
+
+
 module.exports = { 
+    getAllUsers,
     signUp,
      verifyCode,
      signIn,
