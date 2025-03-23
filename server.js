@@ -43,7 +43,7 @@ app.use('/api/v1', routers);
 
 // Test route
 app.get('/api/v1/test', (req, res) => {
-    res.send('I am responding!');
+    res.send('I am responding adnrunint!');
   });
 
   app.use(function(req, res, next) {

@@ -17,7 +17,7 @@ const server = http.createServer(app);
 server.listen(port,process.env.IPADDRESS)
 server.on('error',onError)
 server.on('listening',onListening)
-console.log("Ipaddress",process.env.IPADDRESS);
+console.log("Ipaddress",`http://${process.env.IPADDRESS}:${port}`);
 
 // make function for nomalize the port
 
